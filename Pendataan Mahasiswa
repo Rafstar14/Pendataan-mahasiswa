@@ -1,0 +1,102 @@
+#include <iostream>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+// Fungsi untuk memastikan string hanya berisi angka (0-9) tanpa huruf/spasi
+bool validasiHanyaAngka(const string& teks) {
+    if (teks.empty()) return false;
+    for (size_t i = 0; i < teks.length(); i++) {
+        if (teks[i] < '0' || teks[i] > '9') {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    string inputJumlah;
+    int jumlahMhs = 0;
+
+    // 1. Menentukan jumlah mahasiswa di terminal (Minimal 1)
+    do {
+        cout << "jumlah mahasiswa yang ingin didata (minimal 1): ";
+        getline(cin, inputJumlah);
+
+        if (!validasiHanyaAngka(inputJumlah)) {
+            cout << "[!] Error: Masukkan angka bulat positif tanpa huruf/spasi!\n\n";
+            continue;
+        }
+
+        jumlahMhs = stoi(inputJumlah);
+        if (jumlahMhs < 1) {
+            cout << "[!] Error: Jumlah mahasiswa minimal harus 1 data!\n\n";
+        }
+    } while (jumlahMhs < 1);
+
+    // 2. Deklarasi Array 1D menyesuaikan jumlah yang diinput di terminal
+    string* nim    = new string[jumlahMhs];
+    string* nama   = new string[jumlahMhs];
+    string* prodi  = new string[jumlahMhs];
+    string* alamat = new string[jumlahMhs];
+
+    // 3. Input data mahasiswa di terminal
+    cout << "\n=== INPUT DATA MAHASISWA ===\n";
+    for (int i = 0; i < jumlahMhs; i++) {
+        cout << "\nData Mahasiswa ke-" << (i + 1) << " (Indeks [" << i << "]):\n";
+
+        // Validasi NIM wajib angka saja
+        do {
+            cout << "NIM    : ";
+            getline(cin, nim[i]);
+            if (!validasiHanyaAngka(nim[i])) {
+                cout << "[!] Error: NIM hanya boleh berisi angka (0-9) tanpa huruf!\n";
+            }
+        } while (!validasiHanyaAngka(nim[i]));
+
+        cout << "Nama   : ";
+        getline(cin, nama[i]);
+
+        cout << "Prodi  : ";
+        getline(cin, prodi[i]);
+
+        cout << "Alamat : ";
+        getline(cin, alamat[i]);
+    }
+
+    // 4. Menampilkan hasil dalam bentuk tabel rapi
+    cout << "\n=================================================================================\n";
+    cout << "                            HASIL PENDATAAN MAHASISWA                            \n";
+    cout << "=================================================================================\n";
+    cout << left << setw(4)  << "No"
+         << setw(14) << "NIM"
+         << setw(20) << "Nama"
+         << setw(22) << "Prodi"
+         << "Alamat\n";
+    cout << "---------------------------------------------------------------------------------\n";
+
+    for (int i = 0; i < jumlahMhs; i++) {
+        cout << left << setw(4)  << (i + 1)
+             << setw(14) << nim[i]
+             << setw(20) << nama[i]
+             << setw(22) << prodi[i]
+             << alamat[i] << "\n";
+    }
+    cout << "=================================================================================\n";
+
+    // 5. Output sesuai format pemanggilan indeks nim[i] << nama[i] << prodi[i] << alamat[i]
+    cout << "\n=== OUTPUT PEMANGGILAN LANGSUNG PER INDEKS ===\n";
+    for (int i = 0; i < jumlahMhs; i++) {
+        cout << "Indeks [" << i << "] -> "
+             << nim[i] << " | " << nama[i] << " | " << prodi[i] << " | " << alamat[i] << "\n";
+    }
+
+    // Membersihkan memori dinamis setelah selesai digunakan
+    delete[] nim;
+    delete[] nama;
+    delete[] prodi;
+    delete[] alamat;
+
+    return 0;
+}
