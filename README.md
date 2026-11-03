@@ -1,106 +1,85 @@
-#include <iostream>
-#include <string>
-#include <iomanip>
+# Pendataan Mahasiswa (C++)
 
-using namespace std;
+Program konsol C++ untuk mendata mahasiswa. Jumlah data ditentukan saat program berjalan, lalu setiap mahasiswa dicatat dengan NIM, nama, program studi, dan alamat. Hasilnya ditampilkan sebagai tabel dan sebagai daftar per indeks array.
 
-const int MAKS_MHS = 1000;
+## Fitur
 
-// Fungsi untuk memastikan string hanya berisi angka (0-9) tanpa huruf/spasi
-bool validasiHanyaAngka(const string& teks) {
-    if (teks.empty()) return false;
-    for (size_t i = 0; i < teks.length(); i++) {
-        if (teks[i] < '0' || teks[i] > '9') {
-            return false;
-        }
-    }
-    return true;
-}
+Program menyimpan data di empat array 1D dinamis (`nim`, `nama`, `prodi`, `alamat`) yang ukurannya mengikuti jumlah mahasiswa yang diinput. Indeks yang sama di keempat array menunjuk ke satu mahasiswa yang sama.
 
-int main() {
-    string inputJumlah;
-    int jumlahMhs = 0;
+Input divalidasi supaya program tidak berhenti di tengah jalan:
 
-    // 1. Menentukan jumlah mahasiswa di terminal (1 sampai MAKS_MHS)
-    do {
-        cout << "jumlah mahasiswa yang ingin didata (1-" << MAKS_MHS << "): ";
-        if (!getline(cin, inputJumlah)) return 1; // input terputus (EOF)
+- Jumlah mahasiswa harus angka bulat antara 1 dan 1000. Input kosong, huruf, spasi, atau angka lebih dari 4 digit ditolak dan ditanyakan ulang.
+- NIM hanya boleh berisi angka 0-9. NIM disimpan sebagai `string` sehingga angka 0 di depan tidak hilang.
+- Jika input terputus di tengah jalan (misalnya Ctrl+D di Linux/macOS atau Ctrl+Z di Windows), program keluar dengan kode 1 dan tidak masuk ke perulangan tanpa akhir.
 
-        // Batas 4 digit mencegah stoi melempar out_of_range
-        if (!validasiHanyaAngka(inputJumlah) || inputJumlah.length() > 4) {
-            cout << "[!] Error: Masukkan angka bulat positif maksimal 4 digit tanpa huruf/spasi!\n\n";
-            jumlahMhs = 0;
-            continue;
-        }
+Memori dinamis dibebaskan dengan `delete[]` saat program selesai normal.
 
-        jumlahMhs = stoi(inputJumlah);
-        if (jumlahMhs < 1 || jumlahMhs > MAKS_MHS) {
-            cout << "[!] Error: Jumlah mahasiswa harus antara 1 dan " << MAKS_MHS << "!\n\n";
-        }
-    } while (jumlahMhs < 1 || jumlahMhs > MAKS_MHS);
+## Persyaratan
 
-    // 2. Deklarasi Array 1D menyesuaikan jumlah yang diinput di terminal
-    string* nim    = new string[jumlahMhs];
-    string* nama   = new string[jumlahMhs];
-    string* prodi  = new string[jumlahMhs];
-    string* alamat = new string[jumlahMhs];
+Kompiler C++ yang mendukung C++11 atau lebih baru, misalnya `g++` atau `clang++`.
 
-    // 3. Input data mahasiswa di terminal
-    cout << "\n=== INPUT DATA MAHASISWA ===\n";
-    for (int i = 0; i < jumlahMhs; i++) {
-        cout << "\nData Mahasiswa ke-" << (i + 1) << " (Indeks [" << i << "]):\n";
+## Kompilasi dan menjalankan
 
-        // Validasi NIM wajib angka saja
-        do {
-            cout << "NIM    : ";
-            if (!getline(cin, nim[i])) return 1; // input terputus (EOF)
-            if (!validasiHanyaAngka(nim[i])) {
-                cout << "[!] Error: NIM hanya boleh berisi angka (0-9) tanpa huruf!\n";
-            }
-        } while (!validasiHanyaAngka(nim[i]));
+```bash
+g++ -std=c++11 -Wall -Wextra main.cpp -o pendataan
+./pendataan
+```
 
-        cout << "Nama   : ";
-        getline(cin, nama[i]);
+Di Windows (MinGW), jalankan dengan `pendataan.exe`.
 
-        cout << "Prodi  : ";
-        getline(cin, prodi[i]);
+## Contoh sesi
 
-        cout << "Alamat : ";
-        getline(cin, alamat[i]);
-    }
+Data di bawah hanya contoh.
 
-    // 4. Menampilkan hasil dalam bentuk tabel rapi
-    cout << "\n=================================================================================\n";
-    cout << "                            HASIL PENDATAAN MAHASISWA                            \n";
-    cout << "=================================================================================\n";
-    cout << left << setw(4)  << "No"
-         << setw(14) << "NIM"
-         << setw(24) << "Nama"
-         << setw(28) << "Prodi"
-         << "Alamat\n";
-    cout << "---------------------------------------------------------------------------------\n";
+```text
+jumlah mahasiswa yang ingin didata (1-1000): 2
 
-    for (int i = 0; i < jumlahMhs; i++) {
-        cout << left << setw(4)  << (i + 1)
-             << setw(14) << nim[i]
-             << setw(24) << nama[i]
-             << setw(28) << prodi[i]
-             << alamat[i] << "\n";
-    }
-    cout << "=================================================================================\n";
+=== INPUT DATA MAHASISWA ===
 
-    // 5. Output sesuai format pemanggilan indeks nim[i] << nama[i] << prodi[i] << alamat[i]
-    cout << "\n=== OUTPUT PEMANGGILAN LANGSUNG PER INDEKS ===\n";
-    for (int i = 0; i < jumlahMhs; i++) {
-        cout << "Indeks [" << i << "] -> "
-             << nim[i] << " | " << nama[i] << " | " << prodi[i] << " | " << alamat[i] << "\n";
-    }
+Data Mahasiswa ke-1 (Indeks [0]):
+NIM    : 2607441001
+Nama   : Budi Santoso
+Prodi  : Rekayasa Keamanan Siber
+Alamat : Jakarta Selatan
 
-    // Membersihkan memori dinamis setelah selesai digunakan
-    delete[] nim;
-    delete[] nama;
-    delete[] prodi;
-    delete[] alamat;
+Data Mahasiswa ke-2 (Indeks [1]):
+NIM    : 2607441002
+Nama   : Siti Aminah
+Prodi  : Teknik Informatika
+Alamat : Depok
+```
 
-    return 0;
-}
+Keluaran program:
+
+```text
+                            HASIL PENDATAAN MAHASISWA
+=================================================================================
+No  NIM           Nama                    Prodi                       Alamat
+---------------------------------------------------------------------------------
+1   2607441001    Budi Santoso            Rekayasa Keamanan Siber     Jakarta Selatan
+2   2607441002    Siti Aminah             Teknik Informatika          Depok
+=================================================================================
+
+=== OUTPUT PEMANGGILAN LANGSUNG PER INDEKS ===
+Indeks [0] -> 2607441001 | Budi Santoso | Rekayasa Keamanan Siber | Jakarta Selatan
+Indeks [1] -> 2607441002 | Siti Aminah | Teknik Informatika | Depok
+```
+
+## Batasan
+
+- Lebar kolom tabel tetap: nama 24 karakter, prodi 28 karakter. Teks yang lebih panjang tidak dipotong, sehingga kolom di sebelahnya akan bergeser.
+- Nama, prodi, dan alamat boleh dikosongkan. Hanya jumlah dan NIM yang divalidasi.
+- NIM tidak dicek duplikat.
+- Data hanya hidup selama program berjalan. Tidak ada penyimpanan ke file.
+
+## Struktur repositori
+
+```text
+.
+├── main.cpp
+└── README.md
+```
+
+## Penulis
+
+Rakha Firjatullah, Politeknik Negeri Jakarta, D4 Rekayasa Keamanan Siber.
